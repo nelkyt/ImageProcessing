@@ -26,3 +26,48 @@ TEST("Image can be made white")
 		std::cout << "Encode error " << error << ": " << lodepng_error_text(error) << std::endl;
 	}
 }
+
+TEST("Red color channel can be extracted from image")
+{
+	// white pixel
+	std::vector<unsigned char> image = { 255, 255, 255, 255 };
+	unsigned width = 1, height = 1;
+	// red pixel
+	std::vector<unsigned char> expected = { 255, 0, 0, 255 };
+	ImageFilter::extractRedChannel(image, width, height);
+	CONFIRM(expected, image);
+
+	// small square image
+	image = { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 };
+	expected = { 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255 };
+	height = 2, width = 2;
+	ImageFilter::extractRedChannel(image, width, height);
+	CONFIRM(expected, image);
+
+	// small rectangle
+	image = { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 };
+	expected = { 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255 };
+	height = 2, width = 3;
+	ImageFilter::extractRedChannel(image, width, height);
+	CONFIRM(expected, image);
+
+	// small rectangle
+	image = { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 };
+	expected = { 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255 };
+	height = 3, width = 2;
+	ImageFilter::extractRedChannel(image, width, height);
+	CONFIRM(expected, image);
+
+	// visual test that saves the result to an image.
+	unsigned error = lodepng::decode(image, width, height, "../images/cameraman.png");
+	if (error)
+	{
+		std::cout << "Decode error " << error << ": " << lodepng_error_text(error) << std::endl;
+	}
+	ImageFilter::extractRedChannel(image, width, height);
+	error = lodepng::encode("cameraman_red_channel.png", image, width, height);
+	if (error)
+	{
+		std::cout << "Encode error " << error << ": " << lodepng_error_text(error) << std::endl;
+	}
+}
