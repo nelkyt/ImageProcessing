@@ -14,7 +14,7 @@ namespace ImageFilter
 	}
 
 	/* Keeps only the extracted color channel and sets the others to zero. Alpha channel remains untouched. */
-	void extractColorChannel(unsigned colorChannel, std::vector<unsigned char>& image, size_t width, size_t height)
+	void extractColorChannel(unsigned colorChannel, std::vector<unsigned char>& image)
 	{
 		unsigned removableChannels[2];
 		if (colorChannel == 0)
@@ -33,11 +33,10 @@ namespace ImageFilter
 			removableChannels[1] = 1;
 		}
 
-		for (size_t y = 0; y < height; ++y)
-		for (size_t x = 0; x < width; ++x)
+		for (size_t i = 0; i < image.size() / 4; ++i)
 		{
-			image[4 * width * y + 4 * x + removableChannels[0]] = 0;
-			image[4 * width * y + 4 * x + removableChannels[1]] = 0;
+			image[4 * i + removableChannels[0]] = 0;
+			image[4 * i + removableChannels[1]] = 0;
 		}
 	}
 };
