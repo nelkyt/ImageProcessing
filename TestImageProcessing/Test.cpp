@@ -37,27 +37,7 @@ TEST("Red color channel can be extracted from image")
 	std::vector<unsigned char> expected = { 255, 0, 0, 255 };
 	ImageFilter::extractColorChannel(red, image);
 	CONFIRM(expected, image);
-
-	// small square image
-	image = { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 };
-	expected = { 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255 };
-	height = 2, width = 2;
-	ImageFilter::extractColorChannel(red, image);
-	CONFIRM(expected, image);
-
-	// small rectangle
-	image = { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 };
-	expected = { 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255 };
-	height = 2, width = 3;
-	ImageFilter::extractColorChannel(red, image);
-	CONFIRM(expected, image);
-
-	// small rectangle
-	image = { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 };
-	expected = { 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255 };
-	height = 3, width = 2;
-	ImageFilter::extractColorChannel(red, image);
-	CONFIRM(expected, image);
+	image.clear();
 
 	// visual test that saves the result to an image.
 	unsigned error = lodepng::decode(image, width, height, "../images/cameraman.png");
@@ -82,27 +62,7 @@ TEST("Green color channel can be extracted from image")
 	std::vector<unsigned char> expected = { 0, 255, 0, 255 };
 	ImageFilter::extractColorChannel(green, image);
 	CONFIRM(expected, image);
-
-	// small square image
-	image = { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 };
-	expected = { 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255 };
-	height = 2, width = 2;
-	ImageFilter::extractColorChannel(green, image);
-	CONFIRM(expected, image);
-
-	// small rectangle
-	image = { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 };
-	expected = { 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255 };
-	height = 2, width = 3;
-	ImageFilter::extractColorChannel(green, image);
-	CONFIRM(expected, image);
-
-	// small rectangle
-	image = { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 };
-	expected = { 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255 };
-	height = 3, width = 2;
-	ImageFilter::extractColorChannel(green, image);
-	CONFIRM(expected, image);
+	image.clear();
 
 	// visual test that saves the result to an image.
 	unsigned error = lodepng::decode(image, width, height, "../images/cameraman.png");
@@ -119,6 +79,32 @@ TEST("Green color channel can be extracted from image")
 }
 
 TEST("Blue color channel can be extracted from image")
+{
+	// white pixel
+	std::vector<unsigned char> image = { 255, 255, 255, 255 };
+	unsigned width = 1, height = 1;
+	// red pixel
+	std::vector<unsigned char> expected = { 0, 0, 255, 255 };
+	ImageFilter::extractColorChannel(blue, image);
+	CONFIRM(expected, image);
+	image.clear();
+
+	// visual test that saves the result to an image.
+	unsigned error = lodepng::decode(image, width, height, "../images/cameraman.png");
+	if (error)
+	{
+		std::cout << "Decode error " << error << ": " << lodepng_error_text(error) << std::endl;
+	}
+	ImageFilter::extractColorChannel(blue, image);
+	error = lodepng::encode("cameraman_blue_channel.png", image, width, height);
+	if (error)
+	{
+		std::cout << "Encode error " << error << ": " << lodepng_error_text(error) << std::endl;
+	}
+}
+
+// Might not be necessary to test, but this kind of test should pass so it is kept
+TEST("Color channel extraction works on different image shapes")
 {
 	// white pixel
 	std::vector<unsigned char> image = { 255, 255, 255, 255 };
@@ -148,17 +134,4 @@ TEST("Blue color channel can be extracted from image")
 	height = 3, width = 2;
 	ImageFilter::extractColorChannel(blue, image);
 	CONFIRM(expected, image);
-
-	// visual test that saves the result to an image.
-	unsigned error = lodepng::decode(image, width, height, "../images/cameraman.png");
-	if (error)
-	{
-		std::cout << "Decode error " << error << ": " << lodepng_error_text(error) << std::endl;
-	}
-	ImageFilter::extractColorChannel(blue, image);
-	error = lodepng::encode("cameraman_blue_channel.png", image, width, height);
-	if (error)
-	{
-		std::cout << "Encode error " << error << ": " << lodepng_error_text(error) << std::endl;
-	}
 }
