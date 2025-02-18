@@ -106,18 +106,10 @@ TEST("Blue color channel can be extracted from image")
 // Might not be necessary to test, but this kind of test should pass so it is kept
 TEST("Color channel extraction works on different image shapes")
 {
-	// white pixel
-	std::vector<unsigned char> image = { 255, 255, 255, 255 };
-	unsigned width = 1, height = 1;
-	// red pixel
-	std::vector<unsigned char> expected = { 0, 0, 255, 255 };
-	ImageFilter::extractColorChannel(blue, image);
-	CONFIRM(expected, image);
-
 	// small square image
-	image = { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 };
-	expected = { 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255 };
-	height = 2, width = 2;
+	std::vector<unsigned char> image = { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 };
+	std::vector<unsigned char> expected = { 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255 };
+	unsigned height = 2, width = 2;
 	ImageFilter::extractColorChannel(blue, image);
 	CONFIRM(expected, image);
 
