@@ -138,13 +138,54 @@ TEST("Padding of 0s can be added to pixel")
 	std::vector<unsigned char> paddedImage = ImageFilter::createPaddedImage(image, width, height, filterSize);
 	CONFIRM(expected, paddedImage);
 
-	image = { 255, 255, 255, 255 };
 	filterSize = 5;
 	expected = { 0,0,0,0, 0,0,0,0,      0,0,0,0,       0,0,0,0, 0,0,0,0,
 				 0,0,0,0, 0,0,0,0,      0,0,0,0,       0,0,0,0, 0,0,0,0,
 				 0,0,0,0, 0,0,0,0, 255, 255, 255, 255, 0,0,0,0, 0,0,0,0,
 				 0,0,0,0, 0,0,0,0,      0,0,0,0,       0,0,0,0, 0,0,0,0,
 				 0,0,0,0, 0,0,0,0,      0,0,0,0,       0,0,0,0, 0,0,0,0};
+	paddedImage = ImageFilter::createPaddedImage(image, width, height, filterSize);
+	CONFIRM(expected, paddedImage);
+}
+
+TEST("Padding of 0s can be added to images with different shapes")
+{
+	// small square image
+	std::vector<unsigned char> image = { 255, 255, 255, 255, 255, 255, 255, 255,
+										 255, 255, 255, 255, 255, 255, 255, 255 };
+	std::vector<unsigned char> expected = { 0,0,0,0,          0,0,0,0,         0,0,0,0,				0,0,0,0,
+											0,0,0,0,	255, 255, 255, 255, 255, 255, 255, 255,		0,0,0,0,
+											0,0,0,0,	255, 255, 255, 255, 255, 255, 255, 255,		0,0,0,0,
+											0,0,0,0,		  0,0,0,0,			0,0,0,0,			0,0,0,0};
+	unsigned height = 2, width = 2, filterSize = 3;
+	std::vector<unsigned char> paddedImage = ImageFilter::createPaddedImage(image, width, height, filterSize);
+	CONFIRM(expected, paddedImage);
+
+	// small rectangle
+	image = { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+			  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 };
+	expected = {0,0,0,0, 0,0,0,0,				0,0,0,0,		0,0,0,0,			0,0,0,0,			0,0,0,0, 0,0,0,0,
+				0,0,0,0, 0,0,0,0,				0,0,0,0,		0,0,0,0,			0,0,0,0,			0,0,0,0, 0,0,0,0,
+				0,0,0,0, 0,0,0,0,		255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,		0,0,0,0, 0,0,0,0,
+				0,0,0,0, 0,0,0,0,		255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,		0,0,0,0, 0,0,0,0,
+				0,0,0,0, 0,0,0,0,				0,0,0,0,		0,0,0,0,			0,0,0,0,			0,0,0,0, 0,0,0,0,
+				0,0,0,0, 0,0,0,0,				0,0,0,0,		0,0,0,0,			0,0,0,0,			0,0,0,0, 0,0,0,0};
+	height = 2, width = 3, filterSize = 5;
+	paddedImage = ImageFilter::createPaddedImage(image, width, height, filterSize);
+	CONFIRM(expected, paddedImage);
+
+	// small rectangle
+	image = { 255, 255, 255, 255, 255, 255, 255, 255,
+			  255, 255, 255, 255, 255, 255, 255, 255,
+			  255, 255, 255, 255, 255, 255, 255, 255 };
+	expected = {0,0,0,0, 0,0,0,0,				0,0,0,0,		0,0,0,0,			0,0,0,0, 0,0,0,0,
+				0,0,0,0, 0,0,0,0,				0,0,0,0,		0,0,0,0,			0,0,0,0, 0,0,0,0,
+				0,0,0,0, 0,0,0,0,		255, 255, 255, 255, 255, 255, 255, 255,		0,0,0,0, 0,0,0,0,
+				0,0,0,0, 0,0,0,0,		255, 255, 255, 255, 255, 255, 255, 255,		0,0,0,0, 0,0,0,0,
+				0,0,0,0, 0,0,0,0,		255, 255, 255, 255, 255, 255, 255, 255,		0,0,0,0, 0,0,0,0,
+				0,0,0,0, 0,0,0,0,				0,0,0,0,		0,0,0,0,			0,0,0,0, 0,0,0,0,
+				0,0,0,0, 0,0,0,0,				0,0,0,0,		0,0,0,0,			0,0,0,0, 0,0,0,0};
+	height = 3, width = 2;
 	paddedImage = ImageFilter::createPaddedImage(image, width, height, filterSize);
 	CONFIRM(expected, paddedImage);
 }
