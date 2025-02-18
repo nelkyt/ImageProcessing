@@ -188,4 +188,19 @@ TEST("Padding of 0s can be added to images with different shapes")
 	height = 3, width = 2;
 	paddedImage = ImageFilter::createPaddedImage(image, width, height, filterSize);
 	CONFIRM(expected, paddedImage);
+
+	// visual test
+	image.clear();
+	filterSize = 101; // make sure that padding is visible in the resulting image
+	unsigned error = lodepng::decode(image, width, height, "../images/cameraman.png");
+	if (error)
+	{
+		std::cout << "Decode error " << error << ": " << lodepng_error_text(error) << std::endl;
+	}
+	paddedImage = ImageFilter::createPaddedImage(image, width, height, filterSize);
+	error = lodepng::encode("cameraman_padded_with_transparent_pixels.png", paddedImage, width + filterSize / 2 * 2, height + filterSize / 2 * 2);
+	if (error)
+	{
+		std::cout << "Encode error " << error << ": " << lodepng_error_text(error) << std::endl;
+	}
 }
