@@ -135,3 +135,24 @@ TEST("Color channel extraction works on different image shapes")
 	ImageFilter::extractColorChannel(blue, image);
 	CONFIRM(expected, image);
 }
+
+TEST("Padding of 0s can be added to pixel")
+{
+	std::vector<unsigned char> image = { 255, 255, 255, 255 };
+	unsigned width = 1, height = 1, filterSize = 3;
+	std::vector<unsigned char> expected = { 0,0,0,0,      0,0,0,0,       0,0,0,0,
+										    0,0,0,0, 255, 255, 255, 255, 0,0,0,0,
+											0,0,0,0,      0,0,0,0,       0,0,0,0};
+	std::vector<unsigned char> paddedImage = ImageFilter::createPaddedImage(image, width, height, filterSize);
+	CONFIRM(expected, paddedImage);
+
+	image = { 255, 255, 255, 255 };
+	filterSize = 5;
+	expected = { 0,0,0,0, 0,0,0,0,      0,0,0,0,       0,0,0,0, 0,0,0,0,
+				 0,0,0,0, 0,0,0,0,      0,0,0,0,       0,0,0,0, 0,0,0,0,
+				 0,0,0,0, 0,0,0,0, 255, 255, 255, 255, 0,0,0,0, 0,0,0,0,
+				 0,0,0,0, 0,0,0,0,      0,0,0,0,       0,0,0,0, 0,0,0,0,
+				 0,0,0,0, 0,0,0,0,      0,0,0,0,       0,0,0,0, 0,0,0,0};
+	paddedImage = ImageFilter::createPaddedImage(image, width, height, filterSize);
+	CONFIRM(expected, paddedImage);
+}

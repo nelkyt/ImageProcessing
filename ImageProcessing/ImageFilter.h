@@ -39,4 +39,28 @@ namespace ImageFilter
 			image[4 * i + removableChannels[1]] = 0;
 		}
 	}
+
+	/* Copies original image into a larger image padded with 0s according to the filter width */
+	std::vector<unsigned char> createPaddedImage(std::vector<unsigned char> &image, size_t width, size_t height, size_t filterSize)
+	{
+		// the filter matrix will overlap at most by half its size to the outside of the image
+		size_t paddingSize = filterSize / 2,
+		paddedWidth = width + 2 * paddingSize, // padding is added to both left and right
+		paddedHeight = height + 2 * paddingSize; // padding is added above and below
+		std::vector<unsigned char> paddedImage(4 * paddedWidth * paddedHeight);
+
+		for (size_t y = 0; y < height; ++y)
+		{
+			size_t paddedY = y + paddingSize;
+			for (size_t x = 0; x < width; ++x)
+			{
+				size_t paddedX = x + paddingSize;
+				for (size_t c = 0; c < 4; ++c)
+				{
+					paddedImage[4 * paddedY * paddedWidth + 4 * paddedX + c] = image[4 * y * width + 4 * x + c];
+				}
+			}
+		}
+		return paddedImage;
+	}
 };
