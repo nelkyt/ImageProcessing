@@ -47,7 +47,7 @@ namespace ImageFilter
 		size_t paddingSize = filterSize / 2,
 		paddedWidth = width + 2 * paddingSize, // padding is added to both left and right
 		paddedHeight = height + 2 * paddingSize; // padding is added above and below
-		std::vector<unsigned char> paddedImage(4 * paddedWidth * paddedHeight);
+		std::vector<unsigned char> paddedImage(4 * paddedWidth * paddedHeight, 0);
 
 		for (size_t y = 0; y < height; ++y)
 		{
@@ -57,7 +57,9 @@ namespace ImageFilter
 				size_t paddedX = x + paddingSize;
 				for (size_t c = 0; c < 4; ++c)
 				{
-					paddedImage[4 * paddedY * paddedWidth + 4 * paddedX + c] = image[4 * y * width + 4 * x + c];
+					size_t paddedIndex = 4 * (paddedY * paddedWidth + paddedX) + c;
+					size_t imageIndex =  4 * (y * width + x) + c;
+					paddedImage[paddedIndex] = image[imageIndex];
 				}
 			}
 		}
