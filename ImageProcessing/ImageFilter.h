@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
 namespace ImageFilter
 {
@@ -41,7 +42,7 @@ namespace ImageFilter
 	}
 
 	/* Copies original image into a larger image padded with 0s according to the filter width */
-	std::vector<unsigned char> createPaddedImage(std::vector<unsigned char> &image, size_t width, size_t height, size_t filterSize)
+	std::vector<unsigned char> zeroPadded(std::vector<unsigned char> &image, size_t width, size_t height, size_t filterSize)
 	{
 		// the filter matrix will overlap at most by half its size to the outside of the image
 		size_t paddingSize = filterSize / 2,
@@ -65,4 +66,36 @@ namespace ImageFilter
 		}
 		return paddedImage;
 	}
+
+	/* Copies original image into a larger image padded with replicated values from the edge of the image */
+	std::vector<unsigned char> replicationPadded(std::vector<unsigned char>& image, size_t width, size_t height, size_t filterSize)
+	{
+		// the filter matrix will overlap at most by half its size to the outside of the image
+		size_t paddingSize = filterSize / 2,
+			paddedWidth = width + 2 * paddingSize, // padding is added to both left and right
+			paddedHeight = height + 2 * paddingSize; // padding is added above and below
+		std::vector<unsigned char> paddedImage(4 * paddedWidth * paddedHeight, 0);
+
+		for (size_t y = 0; y < paddedHeight; ++y)
+		{
+			for (size_t x = 0; x < paddedWidth; ++x)
+			{
+				for (size_t c = 0; c < 4; ++c)
+				{
+					// makes sure that only pixels in range of the original image can be accessed
+					// in the padding region, automatically clamps to nearest edge pixel in the image
+					// variables need to be converted to signed types like int during calculation
+					// since size_t with value 0 - paddingSize cannot be calculated
+					size_t imageX = std::min(std::max((int)x - (int)paddingSize, 0), (int)width - 1);
+					size_t imageY = std::min(std::max((int)y - (int)paddingSize, 0), (int)height - 1);
+
+					size_t paddedIndex = 4 * (y * paddedWidth + x) + c;
+					size_t imageIndex = 4 * (imageY * width + imageX) + c;
+					paddedImage[paddedIndex] = image[imageIndex];
+				}
+			}
+		}
+		return paddedImage;
+	}
+
 };
