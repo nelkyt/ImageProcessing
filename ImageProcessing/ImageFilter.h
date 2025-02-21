@@ -82,8 +82,9 @@ namespace ImageFilter
 			{
 				for (size_t c = 0; c < 4; ++c)
 				{
-					// makes sure that only pixels in range of the original image can be accessed
-					// in the padding region, automatically clamps to nearest edge pixel in the image
+					// Makes sure that only pixels in range of the original image can be accessed.
+					// In the padding region, automatically clamps to nearest edge pixel in the image.
+					
 					// variables need to be converted to signed types like int during calculation
 					// since size_t with value 0 - paddingSize cannot be calculated
 					size_t imageX = std::min(std::max((int)x - (int)paddingSize, 0), (int)width - 1);
