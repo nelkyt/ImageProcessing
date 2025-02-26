@@ -1,4 +1,4 @@
-#include <MereTDD/Test.h>
+#include "../libs/Test.h"
 #include <iostream>
 
 int main()

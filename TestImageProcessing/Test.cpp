@@ -1,5 +1,5 @@
 #include "../libs/lodepng.h"
-#include <MereTDD/Test.h>
+#include "../libs/Test.h"
 #include "../ImageProcessing/ImageFilter.h"
 
 unsigned red = 0, green = 1, blue = 2;
