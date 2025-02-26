@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <iostream>
-#include <algorithm>
+#include <math.h>
 
 namespace ImageFilter
 {
@@ -99,4 +99,49 @@ namespace ImageFilter
 		return paddedImage;
 	}
 
+	std::vector<unsigned char> convertValuesToUnsignedChar(std::vector<float> vector) {
+		std::vector<unsigned char> converted(vector.size(), 0);
+		for (size_t i = 0; i < vector.size(); ++i)
+		{
+			converted[i] = round(vector[i]);
+		}
+		return converted;
+	}
+
+	std::vector<unsigned char> medianBlur(std::vector<unsigned char>& image, size_t width, size_t height, size_t filterSize)
+	{
+		std::vector<float> kernel(filterSize * filterSize, 1.0f / (float)(filterSize * filterSize));
+		std::vector<unsigned char> paddedImage = replicationPadded(image, width, height, filterSize);
+		std::vector<float> result(4 * width * height, 0.0f);
+		size_t paddingSize = filterSize / 2;
+		size_t paddedWidth = width + paddingSize * 2;
+
+		for (int y = 0; y < height; ++y)
+		{
+			for (int x = 0; x < width; ++x)
+			{
+				for (int c = 0; c < 4; ++c)
+				{
+					size_t resultIndex = 4 * (width * y + x) + c;
+					for (int kernelY = 0; kernelY < filterSize; ++kernelY)
+					{
+						for (int kernelX = 0; kernelX < filterSize; ++kernelX)
+						{
+							size_t paddedX = x + paddingSize;
+							size_t paddedY = y + paddingSize;
+							size_t paddedKernelY = paddedY - paddingSize + kernelY;
+							size_t paddedKernelX = paddedX - paddingSize + kernelX;
+
+							size_t paddedIndex = 4 * (paddedWidth * paddedKernelY + paddedKernelX) + c;
+							int kernelIndex = kernelY * filterSize + kernelX;
+
+							result[resultIndex] += paddedImage[paddedIndex] * kernel[kernelIndex];
+						}
+					}
+				}
+			}
+		}
+
+		return convertValuesToUnsignedChar(result);
+	}
 };

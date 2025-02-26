@@ -265,3 +265,66 @@ TEST("Replication padding can be added to image")
 	paddedImage = ImageFilter::replicationPadded(image, width, height, filterSize);
 	CONFIRM(expected, paddedImage);
 }
+
+TEST("Filter applied on a single pixel does not change the value of the pixel")
+{
+	std::vector<unsigned char> image = { 1,1,1,1 };
+	std::vector<unsigned char> expected = { 1,1,1,1 };
+	unsigned width = 1, height = 1, filterSize = 3;
+	std::vector<unsigned char> filtered = ImageFilter::medianBlur(image, width, height, filterSize);
+	CONFIRM(expected, filtered);
+}
+
+TEST("Median blur can be applied to image")
+{
+	// padding is assumed to be replication padding
+
+	std::vector<unsigned char> image = { 0,0,0,0, 100,150,200,255 };
+	std::vector<unsigned char> expected = { 33,50,67,85, 67,100,133,170 };
+	unsigned width = 2, height = 1, filterSize = 3;
+	std::vector<unsigned char> blurredImage = ImageFilter::medianBlur(image, width, height, filterSize);
+	CONFIRM(expected, blurredImage);
+
+	image = { 1,2,3,4, 5,6,7,8,
+			  8,9,1,2, 3,4,5,6 };
+	height = 2;
+	expected = { 4,5,4,5, 4,5,5,6,
+				 5,6,3,4, 4,5,4,5};
+	blurredImage = ImageFilter::medianBlur(image, width, height, filterSize);
+	CONFIRM(expected, blurredImage);
+
+	image = { 0,0,0,0, 100,150,200,255 };
+	expected = { 40,60,80,102, 60,90,120,153 };
+	height = 1, filterSize = 5;
+	blurredImage = ImageFilter::medianBlur(image, width, height, filterSize);
+	CONFIRM(expected, blurredImage);
+
+	// visual test
+	image.clear();
+	unsigned error = lodepng::decode(image, width, height, "../images/cameraman.png");
+	if (error)
+	{
+		std::cout << "Decode error " << error << ": " << lodepng_error_text(error) << std::endl;
+	}
+	blurredImage = ImageFilter::medianBlur(image, width, height, filterSize);
+	error = lodepng::encode("cameraman_median_blurred_kernel_size_3.png", blurredImage, width, height);
+	if (error)
+	{
+		std::cout << "Encode error " << error << ": " << lodepng_error_text(error) << std::endl;
+	}
+	filterSize = 5;
+	blurredImage = ImageFilter::medianBlur(image, width, height, filterSize);
+	error = lodepng::encode("cameraman_median_blurred_kernel_size_5.png", blurredImage, width, height);
+	if (error)
+	{
+		std::cout << "Encode error " << error << ": " << lodepng_error_text(error) << std::endl;
+	}
+
+	filterSize = 9;
+	blurredImage = ImageFilter::medianBlur(image, width, height, filterSize);
+	error = lodepng::encode("cameraman_median_blurred_kernel_size_9.png", blurredImage, width, height);
+	if (error)
+	{
+		std::cout << "Encode error " << error << ": " << lodepng_error_text(error) << std::endl;
+	}
+}
