@@ -134,20 +134,20 @@ TEST("Color channel extraction works on different image shapes")
 TEST("Padding of 0s can be added to pixel")
 {
 	std::vector<unsigned char> image = { 1,1,1,1 };
-	unsigned width = 1, height = 1, filterSize = 3;
+	unsigned width = 1, height = 1, kernelSize = 3;
 	std::vector<unsigned char> expected = { 0,0,0,0, 0,0,0,0, 0,0,0,0,
 										    0,0,0,0, 1,1,1,1, 0,0,0,0,
 											0,0,0,0, 0,0,0,0, 0,0,0,0};
-	std::vector<unsigned char> paddedImage = ImageFilter::zeroPadded(image, width, height, filterSize);
+	std::vector<unsigned char> paddedImage = ImageFilter::zeroPadded(image, width, height, kernelSize);
 	CONFIRM(expected, paddedImage);
 
-	filterSize = 5;
+	kernelSize = 5;
 	expected = { 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
 				 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
 				 0,0,0,0, 0,0,0,0, 1,1,1,1, 0,0,0,0, 0,0,0,0,
 				 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
 				 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
-	paddedImage = ImageFilter::zeroPadded(image, width, height, filterSize);
+	paddedImage = ImageFilter::zeroPadded(image, width, height, kernelSize);
 	CONFIRM(expected, paddedImage);
 }
 
@@ -160,8 +160,8 @@ TEST("Padding of 0s can be added to images with different shapes")
 											0,0,0,0, 1,1,1,1, 2,2,2,2, 0,0,0,0,
 											0,0,0,0, 3,3,3,3, 4,4,4,4, 0,0,0,0,
 											0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
-	unsigned height = 2, width = 2, filterSize = 3;
-	std::vector<unsigned char> paddedImage = ImageFilter::zeroPadded(image, width, height, filterSize);
+	unsigned height = 2, width = 2, kernelSize = 3;
+	std::vector<unsigned char> paddedImage = ImageFilter::zeroPadded(image, width, height, kernelSize);
 	CONFIRM(expected, paddedImage);
 
 	// small rectangle
@@ -173,8 +173,8 @@ TEST("Padding of 0s can be added to images with different shapes")
 				0,0,0,0, 0,0,0,0, 4,4,4,4, 5,5,5,5, 6,6,6,6, 0,0,0,0, 0,0,0,0,
 				0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
 				0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
-	height = 2, width = 3, filterSize = 5;
-	paddedImage = ImageFilter::zeroPadded(image, width, height, filterSize);
+	height = 2, width = 3, kernelSize = 5;
+	paddedImage = ImageFilter::zeroPadded(image, width, height, kernelSize);
 	CONFIRM(expected, paddedImage);
 
 	// small rectangle
@@ -189,19 +189,19 @@ TEST("Padding of 0s can be added to images with different shapes")
 				0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
 				0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
 	height = 3, width = 2;
-	paddedImage = ImageFilter::zeroPadded(image, width, height, filterSize);
+	paddedImage = ImageFilter::zeroPadded(image, width, height, kernelSize);
 	CONFIRM(expected, paddedImage);
 
 	// visual test
 	image.clear();
-	filterSize = 101; // make sure that padding is visible in the resulting image
+	kernelSize = 101; // make sure that padding is visible in the resulting image
 	unsigned error = lodepng::decode(image, width, height, "../images/cameraman.png");
 	if (error)
 	{
 		std::cout << "Decode error " << error << ": " << lodepng_error_text(error) << std::endl;
 	}
-	paddedImage = ImageFilter::zeroPadded(image, width, height, filterSize);
-	error = lodepng::encode("cameraman_padded_with_transparent_pixels.png", paddedImage, width + filterSize / 2 * 2, height + filterSize / 2 * 2);
+	paddedImage = ImageFilter::zeroPadded(image, width, height, kernelSize);
+	error = lodepng::encode("cameraman_padded_with_transparent_pixels.png", paddedImage, width + kernelSize / 2 * 2, height + kernelSize / 2 * 2);
 	if (error)
 	{
 		std::cout << "Encode error " << error << ": " << lodepng_error_text(error) << std::endl;
@@ -211,20 +211,20 @@ TEST("Padding of 0s can be added to images with different shapes")
 TEST("Replication padding can be added to pixel")
 {
 	std::vector<unsigned char> image = { 1,1,1,1 };
-	unsigned width = 1, height = 1, filterSize = 3;
+	unsigned width = 1, height = 1, kernelSize = 3;
 	std::vector<unsigned char> expected = { 1,1,1,1, 1,1,1,1, 1,1,1,1,
 											1,1,1,1, 1,1,1,1, 1,1,1,1,
 											1,1,1,1, 1,1,1,1, 1,1,1,1 };
-	std::vector<unsigned char> paddedImage = ImageFilter::replicationPadded(image, width, height, filterSize);
+	std::vector<unsigned char> paddedImage = ImageFilter::replicationPadded(image, width, height, kernelSize);
 	CONFIRM(expected, paddedImage);
 
-	filterSize = 5;
+	kernelSize = 5;
 	expected = { 1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1,
 				 1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1,
 				 1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1,
 				 1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1,
 				 1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1 };
-	paddedImage = ImageFilter::replicationPadded(image, width, height, filterSize);
+	paddedImage = ImageFilter::replicationPadded(image, width, height, kernelSize);
 	CONFIRM(expected, paddedImage);
 }
 
@@ -232,11 +232,11 @@ TEST("Replication padding can be added to image")
 {
 	// 2 pixels
 	std::vector<unsigned char> image = { 1,1,1,1, 2,2,2,2 };
-	unsigned width = 2, height = 1, filterSize = 3;
+	unsigned width = 2, height = 1, kernelSize = 3;
 	std::vector<unsigned char> expected = { 1,1,1,1, 1,1,1,1, 2,2,2,2, 2,2,2,2,
 											1,1,1,1, 1,1,1,1, 2,2,2,2, 2,2,2,2,
 											1,1,1,1, 1,1,1,1, 2,2,2,2, 2,2,2,2 };
-	std::vector<unsigned char> paddedImage = ImageFilter::replicationPadded(image, width, height, filterSize);
+	std::vector<unsigned char> paddedImage = ImageFilter::replicationPadded(image, width, height, kernelSize);
 	CONFIRM(expected, paddedImage);
 
 	// small rectangle
@@ -247,7 +247,7 @@ TEST("Replication padding can be added to image")
 				 4,4,4,4, 4,4,4,4, 5,5,5,5, 6,6,6,6, 6,6,6,6,
 				 4,4,4,4, 4,4,4,4, 5,5,5,5, 6,6,6,6, 6,6,6,6 };
 	height = 2, width = 3;
-	paddedImage = ImageFilter::replicationPadded(image, width, height, filterSize);
+	paddedImage = ImageFilter::replicationPadded(image, width, height, kernelSize);
 	CONFIRM(expected, paddedImage);
 
 	// small rectangle
@@ -261,8 +261,8 @@ TEST("Replication padding can be added to image")
 				 5,5,5,5, 5,5,5,5, 5,5,5,5, 6,6,6,6, 6,6,6,6, 6,6,6,6,
 				 5,5,5,5, 5,5,5,5, 5,5,5,5, 6,6,6,6, 6,6,6,6, 6,6,6,6,
 				 5,5,5,5, 5,5,5,5, 5,5,5,5, 6,6,6,6, 6,6,6,6, 6,6,6,6 };
-	height = 3, width = 2, filterSize = 5;
-	paddedImage = ImageFilter::replicationPadded(image, width, height, filterSize);
+	height = 3, width = 2, kernelSize = 5;
+	paddedImage = ImageFilter::replicationPadded(image, width, height, kernelSize);
 	CONFIRM(expected, paddedImage);
 }
 
@@ -270,8 +270,8 @@ TEST("Filter applied on a single pixel does not change the value of the pixel")
 {
 	std::vector<unsigned char> image = { 1,1,1,1 };
 	std::vector<unsigned char> expected = { 1,1,1,1 };
-	unsigned width = 1, height = 1, filterSize = 3;
-	std::vector<unsigned char> filtered = ImageFilter::medianBlur(image, width, height, filterSize);
+	unsigned width = 1, height = 1, kernelSize = 3;
+	std::vector<unsigned char> filtered = ImageFilter::medianBlur(image, width, height, kernelSize);
 	CONFIRM(expected, filtered);
 }
 
@@ -281,8 +281,8 @@ TEST("Median blur can be applied to image")
 
 	std::vector<unsigned char> image = { 0,0,0,0, 100,150,200,255 };
 	std::vector<unsigned char> expected = { 33,50,67,85, 67,100,133,170 };
-	unsigned width = 2, height = 1, filterSize = 3;
-	std::vector<unsigned char> blurredImage = ImageFilter::medianBlur(image, width, height, filterSize);
+	unsigned width = 2, height = 1, kernelSize = 3;
+	std::vector<unsigned char> blurredImage = ImageFilter::medianBlur(image, width, height, kernelSize);
 	CONFIRM(expected, blurredImage);
 
 	image = { 1,2,3,4, 5,6,7,8,
@@ -290,13 +290,13 @@ TEST("Median blur can be applied to image")
 	height = 2;
 	expected = { 4,5,4,5, 4,5,5,6,
 				 5,6,3,4, 4,5,4,5};
-	blurredImage = ImageFilter::medianBlur(image, width, height, filterSize);
+	blurredImage = ImageFilter::medianBlur(image, width, height, kernelSize);
 	CONFIRM(expected, blurredImage);
 
 	image = { 0,0,0,0, 100,150,200,255 };
 	expected = { 40,60,80,102, 60,90,120,153 };
-	height = 1, filterSize = 5;
-	blurredImage = ImageFilter::medianBlur(image, width, height, filterSize);
+	height = 1, kernelSize = 5;
+	blurredImage = ImageFilter::medianBlur(image, width, height, kernelSize);
 	CONFIRM(expected, blurredImage);
 
 	// visual test
@@ -306,22 +306,22 @@ TEST("Median blur can be applied to image")
 	{
 		std::cout << "Decode error " << error << ": " << lodepng_error_text(error) << std::endl;
 	}
-	blurredImage = ImageFilter::medianBlur(image, width, height, filterSize);
+	blurredImage = ImageFilter::medianBlur(image, width, height, kernelSize);
 	error = lodepng::encode("cameraman_median_blurred_kernel_size_3.png", blurredImage, width, height);
 	if (error)
 	{
 		std::cout << "Encode error " << error << ": " << lodepng_error_text(error) << std::endl;
 	}
-	filterSize = 5;
-	blurredImage = ImageFilter::medianBlur(image, width, height, filterSize);
+	kernelSize = 5;
+	blurredImage = ImageFilter::medianBlur(image, width, height, kernelSize);
 	error = lodepng::encode("cameraman_median_blurred_kernel_size_5.png", blurredImage, width, height);
 	if (error)
 	{
 		std::cout << "Encode error " << error << ": " << lodepng_error_text(error) << std::endl;
 	}
 
-	filterSize = 9;
-	blurredImage = ImageFilter::medianBlur(image, width, height, filterSize);
+	kernelSize = 9;
+	blurredImage = ImageFilter::medianBlur(image, width, height, kernelSize);
 	error = lodepng::encode("cameraman_median_blurred_kernel_size_9.png", blurredImage, width, height);
 	if (error)
 	{

@@ -42,10 +42,10 @@ namespace ImageFilter
 	}
 
 	/* Copies original image into a larger image padded with 0s according to the filter width */
-	std::vector<unsigned char> zeroPadded(std::vector<unsigned char> &image, size_t width, size_t height, size_t filterSize)
+	std::vector<unsigned char> zeroPadded(std::vector<unsigned char> &image, size_t width, size_t height, size_t kernelSize)
 	{
 		// the filter matrix will overlap at most by half its size to the outside of the image
-		size_t paddingSize = filterSize / 2,
+		size_t paddingSize = kernelSize / 2,
 		paddedWidth = width + 2 * paddingSize, // padding is added to both left and right
 		paddedHeight = height + 2 * paddingSize; // padding is added above and below
 		std::vector<unsigned char> paddedImage(4 * paddedWidth * paddedHeight, 0);
@@ -68,10 +68,10 @@ namespace ImageFilter
 	}
 
 	/* Copies original image into a larger image padded with replicated values from the edge of the image */
-	std::vector<unsigned char> replicationPadded(std::vector<unsigned char>& image, size_t width, size_t height, size_t filterSize)
+	std::vector<unsigned char> replicationPadded(std::vector<unsigned char>& image, size_t width, size_t height, size_t kernelSize)
 	{
 		// the filter matrix will overlap at most by half its size to the outside of the image
-		size_t paddingSize = filterSize / 2,
+		size_t paddingSize = kernelSize / 2,
 			paddedWidth = width + 2 * paddingSize, // padding is added to both left and right
 			paddedHeight = height + 2 * paddingSize; // padding is added above and below
 		std::vector<unsigned char> paddedImage(4 * paddedWidth * paddedHeight, 0);
@@ -108,12 +108,11 @@ namespace ImageFilter
 		return converted;
 	}
 
-	std::vector<unsigned char> medianBlur(std::vector<unsigned char>& image, size_t width, size_t height, size_t filterSize)
+	std::vector<unsigned char> convolute(std::vector<unsigned char>& image, std::vector<float> &kernel, size_t width, size_t height, size_t kernelSize)
 	{
-		std::vector<float> kernel(filterSize * filterSize, 1.0f / (float)(filterSize * filterSize));
-		std::vector<unsigned char> paddedImage = replicationPadded(image, width, height, filterSize);
+		std::vector<unsigned char> paddedImage = replicationPadded(image, width, height, kernelSize);
 		std::vector<float> result(4 * width * height, 0.0f);
-		size_t paddingSize = filterSize / 2;
+		size_t paddingSize = kernelSize / 2;
 		size_t paddedWidth = width + paddingSize * 2;
 
 		for (int y = 0; y < height; ++y)
@@ -123,9 +122,9 @@ namespace ImageFilter
 				for (int c = 0; c < 4; ++c)
 				{
 					size_t resultIndex = 4 * (width * y + x) + c;
-					for (int kernelY = 0; kernelY < filterSize; ++kernelY)
+					for (int kernelY = 0; kernelY < kernelSize; ++kernelY)
 					{
-						for (int kernelX = 0; kernelX < filterSize; ++kernelX)
+						for (int kernelX = 0; kernelX < kernelSize; ++kernelX)
 						{
 							size_t paddedX = x + paddingSize;
 							size_t paddedY = y + paddingSize;
@@ -133,7 +132,7 @@ namespace ImageFilter
 							size_t paddedKernelX = paddedX - paddingSize + kernelX;
 
 							size_t paddedIndex = 4 * (paddedWidth * paddedKernelY + paddedKernelX) + c;
-							int kernelIndex = kernelY * filterSize + kernelX;
+							int kernelIndex = kernelY * kernelSize + kernelX;
 
 							result[resultIndex] += paddedImage[paddedIndex] * kernel[kernelIndex];
 						}
@@ -141,7 +140,12 @@ namespace ImageFilter
 				}
 			}
 		}
-
 		return convertValuesToUnsignedChar(result);
+	}
+
+	std::vector<unsigned char> medianBlur(std::vector<unsigned char>& image, size_t width, size_t height, size_t kernelSize)
+	{
+		std::vector<float> kernel(kernelSize * kernelSize, 1.0f / (float)(kernelSize * kernelSize));
+		return convolute(image, kernel, width, height, kernelSize);
 	}
 };
